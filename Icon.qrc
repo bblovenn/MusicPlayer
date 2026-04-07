@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="Play">Icon/1.png</file>
+        <file alias="List">Icon/2.png</file>
+        <file alias="Prev">Icon/3.png</file>
+        <file alias="Order">Icon/4.png</file>
+        <file alias="Random">Icon/5.png</file>
+        <file alias="Next">Icon/6.png</file>
+        <file alias="Stop">Icon/7.png</file>
+        <file alias="Repeat">Icon/8.png</file>
+    </qresource>
+</RCC>
