@@ -8,5 +8,6 @@
         <file alias="Next">Icon/6.png</file>
         <file alias="Stop">Icon/7.png</file>
         <file alias="Repeat">Icon/8.png</file>
+        <file alias="BackGround">Icon/9.png</file>
     </qresource>
 </RCC>

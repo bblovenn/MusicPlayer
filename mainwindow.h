@@ -5,6 +5,11 @@
 #include <QIcon>
 #include <QString>
 #include <QPushButton>
+#include <QPixmap>
+#include <QPalette>
+#include <QMediaPlayer>
+#include <QFile>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,7 +33,13 @@ private:
     //PushButton * button	传入任意按钮指针，给这个按钮设置样式（
     void setButtonStyle(QPushButton * button,const QString & fileName);
 
+    //设置背景
+    void setBackGround(const QString & fileName);
+
+
 private:
     Ui::MainWindow *ui;
+
+    QMediaPlayer * m_player;
 };
 #endif // MAINWINDOW_H
