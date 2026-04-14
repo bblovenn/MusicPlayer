@@ -71,3 +71,6 @@ Thumbs.db
 *.dll
 *.exe
 
+# Local music assets
+song/
+
