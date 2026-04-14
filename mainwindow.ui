@@ -61,6 +61,16 @@
      </item>
     </layout>
    </widget>
+   <widget class="QListWidget" name="MusicList">
+    <property name="geometry">
+     <rect>
+      <x>1320</x>
+      <y>30</y>
+      <width>361</width>
+      <height>601</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

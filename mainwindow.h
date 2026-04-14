@@ -7,10 +7,18 @@
 #include <QPushButton>
 #include <QPixmap>
 #include <QPalette>
+#include <QBrush>
 #include <QMediaPlayer>
+#include <QUrl>
+#include <QSound>
 #include <QFile>
 #include <QDebug>
-
+#include <QDir>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
+#include <QEasingCurve>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -22,6 +30,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private slots:
+    void on_PSButton_clicked();
+
+    void on_ListButton_clicked();
 
 private:
     //初始化按钮
@@ -36,10 +49,27 @@ private:
     //设置背景
     void setBackGround(const QString & fileName);
 
+    //加载指定的文件夹
+    void loadMusicDir(const QString &filePath);
+
+    //淡出动画函数
+    void fadeOut();
+
+    //淡入动画函数
+    void fadeIn();
+
 
 private:
     Ui::MainWindow *ui;
 
-    QMediaPlayer * m_player;
+    QSound *m_sound;
+    QMediaPlayer *m_player;
+
+    QPropertyAnimation *m_fadeOut;
+    QPropertyAnimation *m_fadeIn;
+    //控件淡入淡出动画必须用到的透明度特效对象
+    QGraphicsOpacityEffect *m_opacityEffect;
+
+
 };
 #endif // MAINWINDOW_H
