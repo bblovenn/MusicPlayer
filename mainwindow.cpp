@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 测试QMediaPlayer播放MP3
     m_player = new QMediaPlayer(this);
     m_player->setVolume(100);
-    m_player->setMedia(QUrl::fromLocalFile("D:/QTProject/MusicPlayer/MusicPlayer/song/陈奕迅 - 单车.mp3"));
+    //m_player->setMedia(QUrl::fromLocalFile("D:/QTProject/MusicPlayer/MusicPlayer/song/陈奕迅 - 单车.mp3"));
     qDebug() << "QMediaPlayer created, state:" << m_player->state();
 
     setFixedSize(1700,950);
@@ -23,13 +23,28 @@ MainWindow::MainWindow(QWidget *parent)
     setBackGround(":/BackGround");
 
     initButton();
+    //QListWidget{}	选中目标控件：仅对当前 QListWidget 生效
+    //border:none	去掉控件边框，无任何边框线
+    //background:transparent	背景完全透明，不遮挡底层界面
+    //font-size:24px	设置列表文字大小为 24 像素
+    //font-weight:bold	设置列表文字为粗体
+    ui->MusicList->setStyleSheet("QListWidget{border:none;background:transparent;font-size:24px;font-weight:bold;}");
 
     //QString musicDir = "D:\\QTProject\\MusicPlayer\\MusicPlayer\\song\\";
     QString musicDir = "D:/QTProject/MusicPlayer/MusicPlayer/song/";
     loadMusicDir(musicDir);
 
+    //告诉播放器当前音乐是否播放结束
+    connect(m_player,&QMediaPlayer::mediaStatusChanged,this,[=](QMediaPlayer::MediaStatus status){
+        if(status == QMediaPlayer::EndOfMedia){
+            // 播放结束后根据模式处理
+            playNextMusic();
+        }
+    });
+
     //初始化淡出动画
     m_opacityEffect = new QGraphicsOpacityEffect(this);
+    ui->MusicList->viewport()->setGraphicsEffect(m_opacityEffect);
     m_opacityEffect->setOpacity(1.0);  // 初始完全透明
 
     //创建一个控制控件透明度的淡出动画对象
@@ -52,7 +67,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_fadeIn->setEndValue(1.0);
     m_fadeIn->setEasingCurve(QEasingCurve::InCubic);
 
-    connect(m_fadeOut, &QPropertyAnimation::finished, this, &MainWindow::fadeIn);
 }
 
 MainWindow::~MainWindow()
@@ -130,24 +144,106 @@ void MainWindow::loadMusicDir(const QString &filePath)
 //淡出
 void MainWindow::fadeOut()
 {
+    // 当前需求：淡出后保持隐藏，不在动画结束时自动淡入
     /*实现逻辑：
       1. 创建 QGraphicsOpacityEffect 对象
       2. 设置起始透明度为 1.0，结束为 0.0
       3. 设置持续时间（如 500ms）
       4. 绑定 effect 到音乐列表 widget
       5. 启动动画
-      6. 在动画结束时触发 fadeIn()*/
+      6. 动画结束后保持透明，等待下一次点击触发 fadeIn()*/
 
-    ui->MusicList->setGraphicsEffect(m_opacityEffect);
+    //每次淡出前先停止旧动画并重置透明度
+    m_fadeIn->stop();
+    m_fadeOut->stop();
+    m_opacityEffect->setOpacity(1.0);
     m_fadeOut->start();
 }
 
 //淡入
 void MainWindow::fadeIn()
 {
+    //淡入前先停止淡入动画，并把透明度设为 0.0：
     // 淡入完成后恢复
-    ui->MusicList->setGraphicsEffect(m_opacityEffect);
+    m_fadeIn->stop();
+    m_fadeOut->stop();
+    m_opacityEffect->setOpacity(0.0);
     m_fadeIn->start();
+}
+
+//切换播放模式
+void MainWindow::on_ModelButton_clicked()
+{
+    if(m_playMode == OrderMode){
+        m_playMode = RepeatMode;
+        ui->ModelButton->setIcon(QIcon(":/Repeat"));
+    }
+    else if(m_playMode == RepeatMode){
+        m_playMode = RandomMode;
+        ui->ModelButton->setIcon(QIcon(":/Random"));
+    }
+    else if(m_playMode == RandomMode){
+        m_playMode = OrderMode;
+        ui->ModelButton->setIcon(QIcon(":/Order"));
+    }
+}
+
+//播放指定下标音乐
+void MainWindow::playMusic(int index)
+{
+    if(index < 0 || index >= ui->MusicList->count()){
+        return;
+    }
+
+    m_currentIndex = index;
+
+    QString musicName = ui->MusicList->item(index)->text();
+    QString musicPath = "D:/QTProject/MusicPlayer/MusicPlayer/song/" + musicName + ".mp3";
+
+    m_player->setMedia(QUrl::fromLocalFile(musicPath));
+    m_player->play();
+}
+
+//播放下一首歌
+void MainWindow::playNextMusic()
+{
+    if(m_playMode == OrderMode){
+        int nextIndex = m_currentIndex + 1;
+        if(nextIndex >= ui->MusicList->count()){
+            nextIndex = 0;
+        }
+        playMusic(nextIndex);
+    }
+    else if(m_playMode == RepeatMode){
+        playMusic(m_currentIndex);
+    }
+    else if(m_playMode == RandomMode){
+        // 从音乐列表中获取一个 0 ~ 列表总数-1 之间的随机索引
+        //QRandomGenerator::global()	获取 Qt 全局随机数生成器（安全、通用，无需手动创建）
+        //bounded(数值)	生成一个 大于等于 0 且 小于 传入数值 的随机整数
+        //ui->MusicList->count()	获取音乐列表中歌曲的总数量
+        //int randomIndex	存储最终生成的随机歌曲索引
+        int randomIndex = QRandomGenerator::global()->bounded(ui->MusicList->count());
+        playMusic(randomIndex);
+    }
+}
+
+void MainWindow::playPrevMusic()
+{
+    if(m_playMode == OrderMode){
+            int prevIndex = m_currentIndex - 1;
+            if(prevIndex >= ui->MusicList->count()){
+                prevIndex = 0;
+            }
+            playMusic(prevIndex);
+     }
+     else if(m_playMode == RepeatMode){
+         playMusic(m_currentIndex);
+     }
+     else if(m_playMode == RandomMode){
+         int randomIndex = QRandomGenerator::global()->bounded(ui->MusicList->count());
+         playMusic(randomIndex);
+    }
 }
 
 //播放暂停
@@ -159,7 +255,7 @@ void MainWindow::on_PSButton_clicked()
         ui->PSButton->setIcon(QIcon(":/Play"));
     }
     else{
-        m_player->play();
+        playMusic(m_currentIndex);
         ui->PSButton->setIcon(QIcon(":/Stop"));
     }
 }
@@ -167,5 +263,15 @@ void MainWindow::on_PSButton_clicked()
 //查看歌曲列表
 void MainWindow::on_ListButton_clicked()
 {
-    fadeOut();
+    // 根据当前显示状态切换动画：显示时淡出，隐藏时淡入
+    if(m_musicListVisible){
+        //qDebug() << "ListButton clicked, fade out MusicList";
+        fadeOut();
+        m_musicListVisible = false;
+    }
+    else{
+        //qDebug() << "ListButton clicked, fade in MusicList";
+        fadeIn();
+        m_musicListVisible = true;
+    }
 }

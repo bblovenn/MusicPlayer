@@ -18,7 +18,8 @@
 #include <QMessageBox>
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
-#include <QEasingCurve>
+#include <QRandomGenerator>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -35,6 +36,9 @@ private slots:
     void on_PSButton_clicked();
 
     void on_ListButton_clicked();
+
+    //切换播放模式
+    void on_ModelButton_clicked();
 
 private:
     //初始化按钮
@@ -58,6 +62,20 @@ private:
     //淡入动画函数
     void fadeIn();
 
+    //播放指定下标音乐
+    //index :下标
+    //检查 index 是否越界
+    //根据 index 找到对应歌曲文件路径
+    //设置 m_player->setMedia(...)
+    //调用 m_player->play()
+    //更新 m_currentIndex
+    void playMusic(int index);
+
+    //播放下一首歌
+    void playNextMusic();
+
+    //播放上一首歌
+    void playPrevMusic();
 
 private:
     Ui::MainWindow *ui;
@@ -70,6 +88,20 @@ private:
     //控件淡入淡出动画必须用到的透明度特效对象
     QGraphicsOpacityEffect *m_opacityEffect;
 
+    // 记录歌曲列表当前是否显示，用来决定点击列表按钮时淡出还是淡入
+    bool m_musicListVisible = true;
 
+    //播放模式
+    enum PlayMode {
+        OrderMode,
+        RepeatMode,
+        RandomMode
+    };
+
+    //当前播放模式
+    PlayMode m_playMode = OrderMode;
+
+    //记录当前歌曲下标
+    int m_currentIndex = 0;
 };
 #endif // MAINWINDOW_H
