@@ -17,13 +17,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    musicprogressbar.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    musicprogressbar.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    musicprogressbar.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

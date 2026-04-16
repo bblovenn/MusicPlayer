@@ -59,6 +59,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="LyricButton">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QListWidget" name="MusicList">
@@ -67,13 +74,50 @@
       <x>1320</x>
       <y>30</y>
       <width>361</width>
-      <height>601</height>
+      <height>521</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="MusicProgressBar" name="MusicProgressBarWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>590</y>
+      <width>1521</width>
+      <height>80</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="LyricLabel">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>510</y>
+      <width>1100</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:white;
+font-size:28px;
+font-weight:bold;
+background:transparent;</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MusicProgressBar</class>
+   <extends>QWidget</extends>
+   <header location="global">musicprogressbar.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -19,6 +19,8 @@
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
 #include <QRandomGenerator>
+#include <QListWidgetItem>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,17 +39,22 @@ private slots:
 
     void on_ListButton_clicked();
 
-    //切换播放模式
     void on_ModelButton_clicked();
+
+    void on_NextButton_clicked();
+
+    void on_PrevButton_clicked();
+
+    void on_MusicList_itemClicked(QListWidgetItem *item);
+
+
+    void on_LyricButton_clicked();
 
 private:
     //初始化按钮
     void initButton();
 
     //设置按钮样式
-    //const QString &	高效传递只读字符串（图片路径）
-    //fileName	参数：图片文件路径（如 ":/prev.png"）
-    //PushButton * button	传入任意按钮指针，给这个按钮设置样式（
     void setButtonStyle(QPushButton * button,const QString & fileName);
 
     //设置背景
@@ -63,12 +70,6 @@ private:
     void fadeIn();
 
     //播放指定下标音乐
-    //index :下标
-    //检查 index 是否越界
-    //根据 index 找到对应歌曲文件路径
-    //设置 m_player->setMedia(...)
-    //调用 m_player->play()
-    //更新 m_currentIndex
     void playMusic(int index);
 
     //播放下一首歌
@@ -76,6 +77,13 @@ private:
 
     //播放上一首歌
     void playPrevMusic();
+
+    //加载歌词
+    void loadLyric(const QString &musicName);
+
+    //歌词滚动更新
+    void updateLyric(qint64 position);
+
 
 private:
     Ui::MainWindow *ui;
@@ -89,7 +97,7 @@ private:
     QGraphicsOpacityEffect *m_opacityEffect;
 
     // 记录歌曲列表当前是否显示，用来决定点击列表按钮时淡出还是淡入
-    bool m_musicListVisible = true;
+    bool m_musicListVisible = false;
 
     //播放模式
     enum PlayMode {
@@ -103,5 +111,12 @@ private:
 
     //记录当前歌曲下标
     int m_currentIndex = 0;
+
+    //开始时歌词默认隐藏
+    bool m_lyricVisible = false;
+
+    //.lrc 是“时间 -> 歌词”的结构
+    //歌词数据结构
+    QMap<qint64, QString> m_lyrics;
 };
 #endif // MAINWINDOW_H
