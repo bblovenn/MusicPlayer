@@ -1,5 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QCoreApplication>
+
+namespace {
+QString songDirPath()
+{
+    return QDir(QCoreApplication::applicationDirPath()).filePath("song");
+}
+
+QString songFilePath(const QString &fileName)
+{
+    return QDir(songDirPath()).filePath(fileName);
+}
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,14 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("超级帅的音乐播放器");
 
-    //m_player = new QMediaPlayer(this);
-    //m_player->setVolume(100);
-    //m_player->setMedia(QUrl::fromLocalFile("D:/QTProject/MusicPlayer/MusicPlayer/song/陈奕迅 - 单车.mp3"));
-
     // 测试QMediaPlayer播放MP3
     m_player = new QMediaPlayer(this);
     m_player->setVolume(100);
-    //m_player->setMedia(QUrl::fromLocalFile("D:/QTProject/MusicPlayer/MusicPlayer/song/陈奕迅 - 单车.mp3"));
     qDebug() << "QMediaPlayer created, state:" << m_player->state();
 
     setFixedSize(1700,950);
@@ -77,8 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
     );
     ui->MusicProgressBarWidget->reset();
 
-    //QString musicDir = "D:\\QTProject\\MusicPlayer\\MusicPlayer\\song\\";
-    QString musicDir = "D:/QTProject/MusicPlayer/MusicPlayer/song/";
+    QString musicDir = songDirPath();
     loadMusicDir(musicDir);
 
     ui->LyricLabel->hide();
@@ -293,7 +300,7 @@ void MainWindow::playMusic(int index)
     ui->MusicProgressBarWidget->reset();
 
     QString musicName = ui->MusicList->item(index)->text();
-    QString musicPath = "D:/QTProject/MusicPlayer/MusicPlayer/song/" + musicName + ".mp3";
+    QString musicPath = songFilePath(musicName + ".mp3");
 
     loadLyric(musicName);
 
@@ -372,7 +379,7 @@ void MainWindow::loadLyric(const QString &musicName)
 {
     m_lyrics.clear();
 
-    QString lyricPath = "D:/QTProject/MusicPlayer/MusicPlayer/song/" + musicName + ".lrc";
+    QString lyricPath = songFilePath(musicName + ".lrc");
     QFile file(lyricPath);
 
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
